@@ -1,4 +1,4 @@
-package idv.hsu.vevo.ui.dummy;
+package idv.hsu.vevoplayer.ui.dummy;
 
 import java.util.ArrayList;
 import java.util.HashMap;

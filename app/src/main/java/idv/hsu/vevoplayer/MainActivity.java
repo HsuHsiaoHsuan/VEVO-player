@@ -1,5 +1,10 @@
-package idv.hsu.vevo;
+package idv.hsu.vevoplayer;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,10 +18,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
-import idv.hsu.vevo.ui.FragmentList;
+import idv.hsu.vevoplayer.ui.Fragment_Main;
 
-public class MainActivity extends AppCompatActivity implements FragmentList.OnFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity implements Fragment_Main.OnFragmentInteractionListener{
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private TabLayout mTabLayout;
@@ -26,10 +32,30 @@ public class MainActivity extends AppCompatActivity implements FragmentList.OnFr
     // https://developers.google.com/apis-explorer/#p/youtube/v3/youtube.channels.list?part=snippet&forUsername=VEVO&_h=1&
     public static final String VEVO_CHANNEL_ID = "UC2pmfLm7iq6Ov1UwYrWYkZA";
 
+    private boolean idDeviceOnline() {
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int navBarHeight = getNavigationBarHeight();
+            findViewById(R.id.container).setPadding(0, 0, 0, navBarHeight);
+//        }
+
+        if (!idDeviceOnline()) {
+            Toast.makeText(this, "Please connect your device on Internet", Toast.LENGTH_LONG).show();
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -86,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements FragmentList.OnFr
 
         @Override
         public Fragment getItem(int position) {
-            return FragmentList.newInstance("VIEW", String.valueOf(position));
+            return Fragment_Main.newInstance("VIEW", String.valueOf(position));
         }
 
         @Override
@@ -98,5 +124,14 @@ public class MainActivity extends AppCompatActivity implements FragmentList.OnFr
         public CharSequence getPageTitle(int position) {
             return getString(titles[position]);
         }
+    }
+
+    private int getNavigationBarHeight() {
+        Resources resources = getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return resources.getDimensionPixelSize(resourceId);
+        }
+        return 0;
     }
 }

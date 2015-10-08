@@ -1,4 +1,4 @@
-package idv.hsu.vevo;
+package idv.hsu.vevoplayer;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
