@@ -7,7 +7,7 @@
     For more on layout aliases, see:
     http://developer.android.com/training/multiscreen/screensizes.html#TaskUseAliasFilters
     -->
-    <item name="fragment_main_list" type="layout">@layout/fragment_main_list_list</item>
-    <item name="fragment_main_list_cell" type="layout">@layout/cell_list_main</item>
+    <item name="fragment_main_list" type="layout">@layout/fragment_channels_list_list</item>
+    <item name="fragment_main_list_cell" type="layout">@layout/cell_list</item>
 
 </resources>

@@ -15,15 +15,15 @@ import idv.hsu.vevoplayer.R;
 import idv.hsu.vevoplayer.conn.ConnControl;
 import idv.hsu.vevoplayer.data.SubscriptionListResponseItems;
 
-public class Adapter_Main extends BaseAdapter{
-    private static final String TAG = Adapter_Main.class.getSimpleName();
+public class Adapter_Channels extends BaseAdapter{
+    private static final String TAG = Adapter_Channels.class.getSimpleName();
     private static final boolean D = true;
 
     private LayoutInflater mInflater;
     private List<SubscriptionListResponseItems> listData;
     private ImageLoader mImageLoader;
 
-    public Adapter_Main(LayoutInflater inflater, List<SubscriptionListResponseItems> data) {
+    public Adapter_Channels(LayoutInflater inflater, List<SubscriptionListResponseItems> data) {
         mInflater = inflater;
         listData = data;
         mImageLoader = ConnControl.getInstance(inflater.getContext()).getmImageLoader();
