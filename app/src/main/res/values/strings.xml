@@ -5,4 +5,6 @@
 
     <string name="section_main_list">Channels</string>
     <string name="section_favor">Favorite Channel</string>
+    
+    <string name="alarm_last_page">Last Page!</string>
 </resources>

@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <com.android.volley.toolbox.NetworkImageView
         android:id="@android:id/icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="center" />
 
     <TextView
         android:id="@android:id/title"
-        android:layout_alignBottom="@android:id/icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:lines="2"
+        android:layout_gravity="center_horizontal"
         android:textAppearance="@android:style/TextAppearance.Large"/>
-</RelativeLayout>
+</LinearLayout>

@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -23,6 +24,8 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
+import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,12 +60,16 @@ public class Fragment_Main extends Fragment implements AbsListView.OnItemClickLi
     private String mParam2;
     JsonFactory factory = new JsonFactory();
     ObjectMapper mapper = new ObjectMapper();
+    private static final String VEVO_CHANNEL_ID = "UC2pmfLm7iq6Ov1UwYrWYkZA";
     private String nextPageToken = "";
+    private String prevPageToken = "";
+    private boolean isLastPage = false;
 
     private OnFragmentInteractionListener mListener;
     private AbsListView mListView;
     private Adapter_Main mAdapter;
     private List<SubscriptionListResponseItems> listData;
+    private SwipyRefreshLayout swipy;
 
     // TODO: Rename and change types of parameters
     public static Fragment_Main newInstance(String param1, String param2) {
@@ -114,6 +121,19 @@ public class Fragment_Main extends Fragment implements AbsListView.OnItemClickLi
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(this);
 
+        swipy = ((SwipyRefreshLayout) view.findViewById(R.id.swipyrefreshlayout));
+        swipy.setOnRefreshListener(new SwipyRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh(SwipyRefreshLayoutDirection direction) {
+                if (isLastPage) {
+                    Toast.makeText(getContext(), R.string.alarm_last_page, Toast.LENGTH_LONG).show();
+                    swipy.setRefreshing(false);
+                } else {
+                    getMoreData(false);
+                }
+            }
+        });
+
         return view;
     }
 
@@ -123,46 +143,66 @@ public class Fragment_Main extends Fragment implements AbsListView.OnItemClickLi
         if (D) {
             Log.d(TAG, "onResume");
         }
-        /*
+
+        getMoreData(true);
+    }
+
+    /*
            FIXME
            use your own key, create a keys.xml in values folder,
            and add a named "key" string resource.
            i.e.
            <?xml version="1.0" encoding="utf-8"?>
                <resources>
-                <string name="key">AIzaSyCHu2NhlIvwFbiVNWDnh893cYYlgzB9pLw</string>
+                <string name="key">(your api key)</string>
            </resources>
          */
-
+    private void getMoreData(final boolean init) {
         final String key = getActivity().getString(R.string.key);
-        final String url = "https://www.googleapis.com/youtube/v3/subscriptions?part=Snippet&channelId=UC2pmfLm7iq6Ov1UwYrWYkZA&maxResults=50&key=" + key;
+        final String url =
+                "https://www.googleapis.com/youtube/v3/subscriptions?" +
+                "part=Snippet&"  +
+                "channelId=" + VEVO_CHANNEL_ID + "&" +
+                "maxResults=50&" +
+                (!init ? "pageToken=" + nextPageToken + "&" : "") +
+                "key=" + key;
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         JsonParser parser = null;
                         try {
-                            nextPageToken = response.getString("nextPageToken");
+                            if (response.has("nextPageToken")) {
+                                nextPageToken = response.getString("nextPageToken");
+                                isLastPage = false;
+                            } else {
+                                isLastPage = true;
+                                Toast.makeText(getContext(), R.string.alarm_last_page, Toast.LENGTH_LONG).show();
+                            }
+
+                            if (response.has("prevPageToken")) {
+                                prevPageToken = response.getString("prevPageToken");
+                            } else {
+//                                Toast.makeText(getContext(), "First Page!", Toast.LENGTH_LONG).show();
+                            }
+
                             parser = factory.createParser(response.getJSONArray("items").toString());
                             SubscriptionListResponseItems[] items = mapper.readValue(parser, SubscriptionListResponseItems[].class);
-                            if (D) {
-                                for (int x = 0; x < items.length; x++) {
-                                    System.out.println(items[x].getSnippet().getThumbnails().getDef().getUrl());
-                                }
-                            }
-                            listData.clear();
+                            if (init) { listData.clear(); }
                             listData.addAll(Arrays.asList(items));
                             mAdapter.notifyDataSetChanged();
                         } catch (IOException e) {
                             e.printStackTrace();
                         } catch (JSONException e) {
                             e.printStackTrace();
+                        } finally {
+                            if (swipy.isRefreshing()) { swipy.setRefreshing(false); }
                         }
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                if (swipy.isRefreshing()) { swipy.setRefreshing(false); }
             }
         });
         queue.add(request);
