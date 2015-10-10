@@ -49,14 +49,13 @@ public class Fragment_Channels extends Fragment implements AbsListView.OnItemCli
     private String nextPageToken = "INIT";
     private String prevPageToken = "INIT";
 
-    private OnFragmentInteractionListener mListener;
+    private IOnFragmentInteractionListener mListener;
     private AbsListView mListView;
     private Adapter_Channels mAdapter;
     private List<SubscriptionListResponseItems> listData;
     private SwipyRefreshLayout swipy;
 
-    // TODO: Rename and change types of parameters
-    public static Fragment_Channels newInstance(String param1, String param2, String id) {
+    public static Fragment_Channels newInstance(String id) {
         Fragment_Channels fragment = new Fragment_Channels();
         Bundle args = new Bundle();
         args.putString(PARAM_CHANNELID, id);
@@ -71,10 +70,10 @@ public class Fragment_Channels extends Fragment implements AbsListView.OnItemCli
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mListener = (IOnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement IOnFragmentInteractionListener");
         }
     }
 
@@ -197,6 +196,7 @@ public class Fragment_Channels extends Fragment implements AbsListView.OnItemCli
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (null != mListener) {
             mListener.onFragmentInteraction(listData.get(position).getSnippet().getResourceId().getChannelId());
+            mListener.setSubTitle(listData.get(position).getSnippet().getResourceId().getChannelId());
         }
     }
 }

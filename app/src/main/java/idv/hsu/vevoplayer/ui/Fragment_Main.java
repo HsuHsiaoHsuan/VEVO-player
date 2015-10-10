@@ -17,14 +17,18 @@ public class Fragment_Main extends Fragment {
     private static final String TAG = Fragment_Main.class.getSimpleName();
     private static boolean D = true;
 
-    private static final String VEVO_CHANNEL_ID = "UC2pmfLm7iq6Ov1UwYrWYkZA";
-    private OnFragmentInteractionListener mListener;
+    private static final String PARAM_CHANNELID = "CHANNELID";
+    private String channelId;
+    private IOnFragmentInteractionListener mListener;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
 
 
-    public static Fragment_Main newInstance() {
+    public static Fragment_Main newInstance(String id) {
         Fragment_Main fragment = new Fragment_Main();
+        Bundle args = new Bundle();
+        args.putString(PARAM_CHANNELID, id);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -35,16 +39,19 @@ public class Fragment_Main extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mListener = (IOnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement IOnFragmentInteractionListener");
         }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            channelId = getArguments().getString(PARAM_CHANNELID);
+        }
     }
 
     @Override
@@ -57,6 +64,8 @@ public class Fragment_Main extends Fragment {
         mViewPager = (ViewPager) view.findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mListener.setViewPager(mViewPager);
+
+        mListener.setSubTitle(null);
 
         return view;
     }
@@ -77,8 +86,7 @@ public class Fragment_Main extends Fragment {
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
         private int[] titles = {
-                R.string.section_main_list,
-                R.string.section_favor
+                R.string.section_main_list
         };
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -87,7 +95,7 @@ public class Fragment_Main extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            return Fragment_Channels.newInstance("VIEW", String.valueOf(position), VEVO_CHANNEL_ID);
+            return Fragment_Channels.newInstance(channelId);
         }
 
         @Override

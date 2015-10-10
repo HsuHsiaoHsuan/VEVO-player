@@ -12,8 +12,10 @@ import android.support.v4.view.ViewPager;
  * "http://developer.android.com/training/basics/fragments/communicating.html"
  * >Communicating with Other Fragments</a> for more information.
  */
-public interface OnFragmentInteractionListener {
+public interface IOnFragmentInteractionListener {
     public void onFragmentInteraction(String id);
 
     public void setViewPager(ViewPager viewPager);
+
+    public void setSubTitle(String subTitle);
 }

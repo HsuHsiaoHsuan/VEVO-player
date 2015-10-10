@@ -17,10 +17,11 @@ import android.view.View;
 import android.widget.Toast;
 
 import idv.hsu.vevoplayer.ui.Fragment_Main;
-import idv.hsu.vevoplayer.ui.OnFragmentInteractionListener;
+import idv.hsu.vevoplayer.ui.IOnFragmentInteractionListener;
 
-public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements IOnFragmentInteractionListener {
 
+    Toolbar toolbar;
     private TabLayout mTabLayout;
 
     // get it from:
@@ -56,13 +57,14 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             if (savedInstanceState != null) {
                 return;
             }
-            Fragment_Main main = Fragment_Main.newInstance();
+            Fragment_Main main = Fragment_Main.newInstance(VEVO_CHANNEL_ID);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.frag_container, main).commit();
         }
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setSubtitle("test");
 
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
 
@@ -94,11 +96,17 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
     @Override
     public void onFragmentInteraction(String id) {
+        Toast.makeText(this, id, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void setViewPager(ViewPager viewPager) {
         mTabLayout.setupWithViewPager(viewPager);
+    }
+
+    @Override
+    public void setSubTitle(String subTitle) {
+        toolbar.setSubtitle(subTitle);
     }
 
     private int getNavigationBarHeight() {
