@@ -3,7 +3,10 @@
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
-    <string name="section_main_list">Channels</string>
+    <string name="section_channels">Channels</string>
+    <string name="section_playlist">Playlists</string>
+    <string name="section_playlist_items">Playlist Items</string>
+    <string name="section_videos">Videos</string>
     <string name="section_favor">Favorite Channel</string>
     
     <string name="alarm_last_page">Last Page!</string>

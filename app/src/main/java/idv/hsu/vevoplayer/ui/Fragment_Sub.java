@@ -13,26 +13,29 @@ import android.view.ViewGroup;
 
 import idv.hsu.vevoplayer.R;
 
-public class Fragment_Main extends Fragment {
-    private static final String TAG = Fragment_Main.class.getSimpleName();
+public class Fragment_Sub extends Fragment {
+    private static final String TAG = Fragment_Sub.class.getSimpleName();
     private static boolean D = true;
 
     private static final String PARAM_CHANNELID = "CHANNELID";
+    private static final String PARAM_CHANNEL_TITLE = "CHANNELTITLE";
     private String channelId;
+    private String channelTitle;
     private IOnFragmentInteractionListener mListener;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
 
 
-    public static Fragment_Main newInstance(String id) {
-        Fragment_Main fragment = new Fragment_Main();
+    public static Fragment_Sub newInstance(String id, String title) {
+        Fragment_Sub fragment = new Fragment_Sub();
         Bundle args = new Bundle();
         args.putString(PARAM_CHANNELID, id);
+        args.putString(PARAM_CHANNEL_TITLE, title);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public Fragment_Main() {
+    public Fragment_Sub() {
     }
 
     @Override
@@ -51,6 +54,7 @@ public class Fragment_Main extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             channelId = getArguments().getString(PARAM_CHANNELID);
+            channelTitle = getArguments().getString(PARAM_CHANNEL_TITLE);
         }
     }
 
@@ -65,8 +69,6 @@ public class Fragment_Main extends Fragment {
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mListener.setViewPager(mViewPager);
 
-        mListener.setSubTitle(null);
-
         return view;
     }
 
@@ -76,6 +78,7 @@ public class Fragment_Main extends Fragment {
         if (D) {
             Log.d(TAG, "onResume");
         }
+        mListener.setSubTitle(channelTitle);
     }
 
     @Override
@@ -86,6 +89,7 @@ public class Fragment_Main extends Fragment {
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
         private int[] titles = {
+                R.string.section_playlist,
                 R.string.section_channels
         };
 
@@ -95,7 +99,13 @@ public class Fragment_Main extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            return Fragment_Channels.newInstance(channelId);
+            switch (position) {
+                case 0:
+                    return Fragment_Playlists.newInstance(channelId);
+                case 1:
+                    return Fragment_Channels.newInstance(channelId);
+            }
+            return null;
         }
 
         @Override

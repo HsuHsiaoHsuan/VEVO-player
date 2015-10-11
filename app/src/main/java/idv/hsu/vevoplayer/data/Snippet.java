@@ -12,6 +12,7 @@ public class Snippet {
     private ResourceId resourceId;
     private String channelId;
     private Thumbnails thumbnails;
+    private Localized localized;
 
     public String getPublishedAt() {
         return publishedAt;
@@ -61,6 +62,14 @@ public class Snippet {
         this.thumbnails = thumbnails;
     }
 
+    public Localized getLocalized() {
+        return localized;
+    }
+
+    public void setLocalized(Localized localized) {
+        this.localized = localized;
+    }
+
     public class ResourceId {
         public ResourceId() {}
         private String kind;
@@ -87,8 +96,11 @@ public class Snippet {
         public Thumbnails() {}
 
         @JsonProperty(value = "default")
-        private Default def;
-        private High high;
+        private Default def;        // subscriptions, playlists
+        private Medium medium;      // playlists
+        private High high;          // subscriptions, playlists
+        private Standard standard;  // playlists
+        private Maxres maxres;      // playlists
 
         public Default getDef() {
             return def;
@@ -121,6 +133,21 @@ public class Snippet {
             }
         }
 
+        public class Medium {
+            public Medium() {
+            }
+
+            private String url;
+
+            public String getUrl() {
+                return url;
+            }
+
+            public void setUrl(String url) {
+                this.url = url;
+            }
+        }
+
         public class High {
             public High() {
             }
@@ -135,9 +162,61 @@ public class Snippet {
                 this.url = url;
             }
         }
+
+        public class Standard {
+            public Standard() {
+            }
+
+            private String url;
+
+            public String getUrl() {
+                return url;
+            }
+
+            public void setUrl(String url) {
+                this.url = url;
+            }
+        }
+
+        public class Maxres {
+            public Maxres() {
+            }
+
+            private String url;
+
+            public String getUrl() {
+                return url;
+            }
+
+            public void setUrl(String url) {
+                this.url = url;
+            }
+        }
     }
 
+    public class Localized {
+        public Localized() {
+        }
 
+        private String title;
+        private String description;
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+    }
 }
 
 

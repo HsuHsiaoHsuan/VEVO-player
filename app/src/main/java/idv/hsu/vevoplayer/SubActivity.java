@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,14 +21,11 @@ import idv.hsu.vevoplayer.ui.Fragment_Main;
 import idv.hsu.vevoplayer.ui.Fragment_Sub;
 import idv.hsu.vevoplayer.ui.IOnFragmentInteractionListener;
 
-public class MainActivity extends AppCompatActivity implements IOnFragmentInteractionListener {
+public class SubActivity extends AppCompatActivity implements IOnFragmentInteractionListener {
 
     Toolbar toolbar;
     private TabLayout mTabLayout;
 
-    // get it from:
-    // https://developers.google.com/apis-explorer/#p/youtube/v3/youtube.channels.list?part=snippet&forUsername=VEVO&_h=1&
-    public static final String VEVO_CHANNEL_ID = "UC2pmfLm7iq6Ov1UwYrWYkZA";
     public static final String EXTRA_CHANNEL_ID = "channelID";
     public static final String EXTRA_CHANNEL_NAME = "channelName";
 
@@ -66,16 +62,13 @@ public class MainActivity extends AppCompatActivity implements IOnFragmentIntera
                 return;
             }
             Intent intent = getIntent();
-            String channelID = intent.getStringExtra(EXTRA_CHANNEL_ID);
-            Fragment_Main main;
-            if (channelID != null) {
-                main = Fragment_Main.newInstance(channelID);
-                setSubTitle(intent.getStringExtra(EXTRA_CHANNEL_NAME));
-            } else {
-                main = Fragment_Main.newInstance(VEVO_CHANNEL_ID);
-            }
+            Fragment_Sub sub =
+                    Fragment_Sub.newInstance(
+                            intent.getStringExtra(EXTRA_CHANNEL_ID),
+                            intent.getStringExtra(EXTRA_CHANNEL_NAME));
+
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.frag_container, main).commit();
+                    .add(R.id.frag_container, sub).commit();
         }
 
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -114,10 +107,11 @@ public class MainActivity extends AppCompatActivity implements IOnFragmentIntera
 //        ft.replace(R.id.frag_container, main);
 //        ft.addToBackStack(null);
 //        ft.commit();
-        Intent intent = new Intent(this, SubActivity.class);
-        intent.putExtra(EXTRA_CHANNEL_ID, id);
-        intent.putExtra(EXTRA_CHANNEL_NAME, title);
-        startActivity(intent);
+
+//        Intent intent = new Intent(this, SubActivity.class);
+//        intent.putExtra(EXTRA_CHANNEL_ID, id);
+//        intent.putExtra(EXTRA_CHANNEL_NAME, title);
+//        startActivity(intent);
     }
 
     @Override

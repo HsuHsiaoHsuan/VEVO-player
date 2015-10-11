@@ -27,6 +27,11 @@ public class RequestMaker {
         return this;
     }
 
+    public RequestMaker playlistId(String playlistId) {
+        url.append("&playlistId=" + playlistId);
+        return this;
+    }
+
     public String build(String key) {
         url.append("&key=" + key);
         return url.toString();

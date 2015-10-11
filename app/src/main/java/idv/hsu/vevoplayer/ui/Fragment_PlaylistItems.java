@@ -37,13 +37,13 @@ import idv.hsu.vevoplayer.conn.ConnControl;
 import idv.hsu.vevoplayer.conn.RequestMaker;
 import idv.hsu.vevoplayer.data.SubscriptionListResponseItems;
 
-public class Fragment_Channels extends Fragment implements AbsListView.OnItemClickListener {
-    private static final String TAG = Fragment_Channels.class.getSimpleName();
+public class Fragment_PlaylistItems extends Fragment implements AbsListView.OnItemClickListener {
+    private static final String TAG = Fragment_PlaylistItems.class.getSimpleName();
     private static boolean D = true;
 
     private RequestQueue queue;
-    private static final String PARAM_CHANNELID = "CHANNELID";
-    private String channelId;
+    private static final String PARAM_PLAYLISTID = "PLAYLISTID";
+    private String playlistId;
     JsonFactory factory = new JsonFactory();
     ObjectMapper mapper = new ObjectMapper();
     private String nextPageToken = "INIT";
@@ -55,15 +55,15 @@ public class Fragment_Channels extends Fragment implements AbsListView.OnItemCli
     private List<SubscriptionListResponseItems> listData;
     private SwipyRefreshLayout swipy;
 
-    public static Fragment_Channels newInstance(String id) {
-        Fragment_Channels fragment = new Fragment_Channels();
+    public static Fragment_PlaylistItems newInstance(String id) {
+        Fragment_PlaylistItems fragment = new Fragment_PlaylistItems();
         Bundle args = new Bundle();
-        args.putString(PARAM_CHANNELID, id);
+        args.putString(PARAM_PLAYLISTID, id);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public Fragment_Channels() {
+    public Fragment_PlaylistItems() {
     }
 
     @Override
@@ -83,7 +83,7 @@ public class Fragment_Channels extends Fragment implements AbsListView.OnItemCli
         queue = ConnControl.getInstance(getContext()).getRequestQueue();
 
         if (getArguments() != null) {
-            channelId = getArguments().getString(PARAM_CHANNELID);
+            playlistId = getArguments().getString(PARAM_PLAYLISTID);
         }
 
         mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
@@ -125,26 +125,23 @@ public class Fragment_Channels extends Fragment implements AbsListView.OnItemCli
             Log.d(TAG, "onResume");
         }
 
-        if (listData.size() == 0) {
-            nextPageToken = "INIT";
-            getMoreData(true);
-        }
+        getMoreData(true);
     }
 
     /*
-       FIXME
-       use your own key, create a keys.xml in values folder,
-       and add a named "key" string resource.
-       i.e.
-       <?xml version="1.0" encoding="utf-8"?>
-           <resources>
-            <string name="key">(your api key)</string>
-       </resources>
-     */
+           FIXME
+           use your own key, create a keys.xml in values folder,
+           and add a named "key" string resource.
+           i.e.
+           <?xml version="1.0" encoding="utf-8"?>
+               <resources>
+                <string name="key">(your api key)</string>
+           </resources>
+         */
     private void getMoreData(final boolean init) {
         final String key = getActivity().getString(R.string.key);
-        String url = new RequestMaker("subscriptions", "snippet")
-                .channelId(channelId)
+        String url = new RequestMaker("playlistItems", "snippet")
+                .playlistId(playlistId)
                 .maxResults(50)
                 .pageToken(nextPageToken)
                 .build(key);
@@ -152,16 +149,13 @@ public class Fragment_Channels extends Fragment implements AbsListView.OnItemCli
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        if (D) {
-                            Log.d(TAG, "onResponse: " + response);
-                        }
                         JsonParser parser = null;
                         try {
                             if (response.has("nextPageToken")) {
                                 nextPageToken = response.getString("nextPageToken");
                             } else {
                                 nextPageToken = "END";
-//                                Toast.makeText(getContext(), R.string.alarm_last_page, Toast.LENGTH_LONG).show();
+                                Toast.makeText(getContext(), R.string.alarm_last_page, Toast.LENGTH_LONG).show();
                             }
 
                             if (response.has("prevPageToken")) {
@@ -200,9 +194,9 @@ public class Fragment_Channels extends Fragment implements AbsListView.OnItemCli
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (null != mListener) {
-            mListener.onFragmentInteraction(listData.get(position).getSnippet().getResourceId().getChannelId(),
-                    listData.get(position).getSnippet().getTitle());
-        }
+//        if (null != mListener) {
+//            mListener.onFragmentInteraction(listData.get(position).getSnippet().getResourceId().getChannelId());
+//            mListener.setSubTitle(listData.get(position).getSnippet().getResourceId().getChannelId());
+//        }
     }
 }
