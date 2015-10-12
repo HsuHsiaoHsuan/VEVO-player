@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import idv.hsu.vevoplayer.ui.Fragment_Main;
 import idv.hsu.vevoplayer.ui.Fragment_Sub;
 import idv.hsu.vevoplayer.ui.IOnFragmentInteractionListener;
 
@@ -112,6 +111,10 @@ public class SubActivity extends AppCompatActivity implements IOnFragmentInterac
 //        intent.putExtra(EXTRA_CHANNEL_ID, id);
 //        intent.putExtra(EXTRA_CHANNEL_NAME, title);
 //        startActivity(intent);
+        Intent intent = new Intent(this, PlayActivity.class);
+        intent.putExtra(PlayActivity.PARAM_PLAYLISTID, id);
+        intent.putExtra(PlayActivity.PARAM_PLAYLIST_TITLE, title);
+        startActivity(intent);
     }
 
     @Override

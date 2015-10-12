@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import idv.hsu.vevoplayer.PlayActivity;
 import idv.hsu.vevoplayer.R;
 import idv.hsu.vevoplayer.conn.ConnControl;
 import idv.hsu.vevoplayer.conn.RequestMaker;
@@ -42,7 +43,6 @@ public class Fragment_PlaylistItems extends Fragment implements AbsListView.OnIt
     private static boolean D = true;
 
     private RequestQueue queue;
-    private static final String PARAM_PLAYLISTID = "PLAYLISTID";
     private String playlistId;
     JsonFactory factory = new JsonFactory();
     ObjectMapper mapper = new ObjectMapper();
@@ -58,7 +58,7 @@ public class Fragment_PlaylistItems extends Fragment implements AbsListView.OnIt
     public static Fragment_PlaylistItems newInstance(String id) {
         Fragment_PlaylistItems fragment = new Fragment_PlaylistItems();
         Bundle args = new Bundle();
-        args.putString(PARAM_PLAYLISTID, id);
+        args.putString(PlayActivity.PARAM_PLAYLISTID, id);
         fragment.setArguments(args);
         return fragment;
     }
@@ -83,7 +83,7 @@ public class Fragment_PlaylistItems extends Fragment implements AbsListView.OnIt
         queue = ConnControl.getInstance(getContext()).getRequestQueue();
 
         if (getArguments() != null) {
-            playlistId = getArguments().getString(PARAM_PLAYLISTID);
+            playlistId = getArguments().getString(PlayActivity.PARAM_PLAYLISTID);
         }
 
         mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
