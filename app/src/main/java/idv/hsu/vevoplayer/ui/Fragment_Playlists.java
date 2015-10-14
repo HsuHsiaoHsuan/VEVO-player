@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import idv.hsu.vevoplayer.R;
+import idv.hsu.vevoplayer.SubActivity;
 import idv.hsu.vevoplayer.conn.ConnControl;
 import idv.hsu.vevoplayer.conn.RequestMaker;
 import idv.hsu.vevoplayer.data.SubscriptionListResponseItems;
@@ -194,9 +195,11 @@ public class Fragment_Playlists extends Fragment implements AbsListView.OnItemCl
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//        if (null != mListener) {
-//            mListener.onFragmentInteraction(listData.get(position).getSnippet().getResourceId().getChannelId());
-//            mListener.setSubTitle(listData.get(position).getSnippet().getResourceId().getChannelId());
-//        }
+        if (null != mListener) {
+            mListener.onFragmentInteraction(
+                    SubActivity.INTERACTION_TYPE_PLAYLIST,
+                    listData.get(position).getId(),
+                    listData.get(position).getSnippet().getTitle());
+        }
     }
 }

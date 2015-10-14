@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements IOnFragmentIntera
     }
 
     @Override
-    public void onFragmentInteraction(String id, String title) {
+    public void onFragmentInteraction(int type, String id, String title) {
 //        Toast.makeText(this, id, Toast.LENGTH_SHORT).show();
 //        Fragment_Sub main = Fragment_Sub.newInstance(id, title);
 //        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

@@ -10,4 +10,6 @@
     <string name="section_favor">Favorite Channel</string>
     
     <string name="alarm_last_page">Last Page!</string>
+
+    <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>s
 </resources>

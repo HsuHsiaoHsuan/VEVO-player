@@ -2,6 +2,7 @@ package idv.hsu.vevoplayer;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -12,16 +13,21 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
+import com.google.android.youtube.player.YouTubeApiServiceUtil;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+
 import idv.hsu.vevoplayer.ui.Fragment_PlaylistItems;
 import idv.hsu.vevoplayer.ui.Fragment_Sub;
 import idv.hsu.vevoplayer.ui.IOnFragmentInteractionListener;
 
-public class PlayActivity extends AppCompatActivity implements IOnFragmentInteractionListener {
+public class PlayActivity extends AppCompatActivity implements IOnFragmentInteractionListener, YouTubePlayer.OnFullscreenListener {
     private static final String TAG = PlayActivity.class.getSimpleName();
     private static final boolean D = true;
 
     public static final String PARAM_PLAYLISTID = "PLAYLISTID";
     public static final String PARAM_PLAYLIST_TITLE = "playlistTitle";
+    private static final int RECOVERY_DIALOG_REQUEST = 1;
 
     private String playlistId;
     private String playlistTitle;
@@ -70,10 +76,20 @@ public class PlayActivity extends AppCompatActivity implements IOnFragmentIntera
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.frag_container, sub).commit();
         }
+
+        checkYouTubeApi();
     }
 
     @Override
-    public void onFragmentInteraction(String id, String title) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == RECOVERY_DIALOG_REQUEST) {
+            // Recreate the activity if user performed a recovery action
+            recreate();
+        }
+    }
+
+    @Override
+    public void onFragmentInteraction(int type, String id, String title) {
 
     }
 
@@ -93,5 +109,22 @@ public class PlayActivity extends AppCompatActivity implements IOnFragmentIntera
             return resources.getDimensionPixelSize(resourceId);
         }
         return 0;
+    }
+
+    private void checkYouTubeApi() {
+        YouTubeInitializationResult errorReason =
+                YouTubeApiServiceUtil.isYouTubeApiServiceAvailable(this);
+        if (errorReason.isUserRecoverableError()) {
+            errorReason.getErrorDialog(this, RECOVERY_DIALOG_REQUEST).show();
+        } else if (errorReason != YouTubeInitializationResult.SUCCESS) {
+            String errorMessage =
+                    String.format(getString(R.string.error_player), errorReason.toString());
+            Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onFullscreen(boolean b) {
+
     }
 }

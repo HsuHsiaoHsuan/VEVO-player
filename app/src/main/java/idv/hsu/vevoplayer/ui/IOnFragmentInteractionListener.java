@@ -13,7 +13,7 @@ import android.support.v4.view.ViewPager;
  * >Communicating with Other Fragments</a> for more information.
  */
 public interface IOnFragmentInteractionListener {
-    public void onFragmentInteraction(String id, String title);
+    public void onFragmentInteraction(int type, String id, String title);
 
     public void setViewPager(ViewPager viewPager);
 

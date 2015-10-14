@@ -201,7 +201,9 @@ public class Fragment_Channels extends Fragment implements AbsListView.OnItemCli
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (null != mListener) {
-            mListener.onFragmentInteraction(listData.get(position).getSnippet().getResourceId().getChannelId(),
+            mListener.onFragmentInteraction(
+                    0,
+                    listData.get(position).getSnippet().getResourceId().getChannelId(),
                     listData.get(position).getSnippet().getTitle());
         }
     }

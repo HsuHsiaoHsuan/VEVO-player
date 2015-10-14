@@ -28,6 +28,9 @@ public class SubActivity extends AppCompatActivity implements IOnFragmentInterac
     public static final String EXTRA_CHANNEL_ID = "channelID";
     public static final String EXTRA_CHANNEL_NAME = "channelName";
 
+    public static final int INTERACTION_TYPE_PLAYLIST = 0;
+    public static final int INTERACTION_TYPE_CHANNELS = 1;
+
     private boolean idDeviceOnline() {
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -99,7 +102,7 @@ public class SubActivity extends AppCompatActivity implements IOnFragmentInterac
     }
 
     @Override
-    public void onFragmentInteraction(String id, String title) {
+    public void onFragmentInteraction(int type, String id, String title) {
 //        Toast.makeText(this, id, Toast.LENGTH_SHORT).show();
 //        Fragment_Sub main = Fragment_Sub.newInstance(id, title);
 //        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -111,10 +114,12 @@ public class SubActivity extends AppCompatActivity implements IOnFragmentInterac
 //        intent.putExtra(EXTRA_CHANNEL_ID, id);
 //        intent.putExtra(EXTRA_CHANNEL_NAME, title);
 //        startActivity(intent);
-        Intent intent = new Intent(this, PlayActivity.class);
-        intent.putExtra(PlayActivity.PARAM_PLAYLISTID, id);
-        intent.putExtra(PlayActivity.PARAM_PLAYLIST_TITLE, title);
-        startActivity(intent);
+        if (type == INTERACTION_TYPE_PLAYLIST) {
+            Intent intent = new Intent(this, PlayActivity.class);
+            intent.putExtra(PlayActivity.PARAM_PLAYLISTID, id);
+            intent.putExtra(PlayActivity.PARAM_PLAYLIST_TITLE, title);
+            startActivity(intent);
+        }
     }
 
     @Override

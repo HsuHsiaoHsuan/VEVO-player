@@ -20,4 +20,27 @@
 
     </com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout>
 
+    <LinearLayout
+        android:id="@+id/video_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/close_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_contents"
+            android:layout_gravity="center_horizontal"
+            android:src="@android:drawable/btn_dialog"
+            android:onClick="onCloseButton"/>
+
+        <fragment
+            class="idv.hsu.vevoplayer.ui.VideoFragment"
+            android:id="@+id/player"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
 </FrameLayout>

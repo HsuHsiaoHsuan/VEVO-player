@@ -62,7 +62,11 @@ public class Adapter_Channels extends BaseAdapter{
             rowView.setTag(holder);
         }
         final ViewHolder holder = (ViewHolder) rowView.getTag();
-        holder.icon.setImageUrl(listData.get(position).getSnippet().getThumbnails().getHigh().getUrl(), mImageLoader);
+        String url = listData.get(position).getSnippet().getThumbnails().getHigh().getUrl();
+        if (url == null) {
+            url = listData.get(position).getSnippet().getThumbnails().getDef().getUrl();
+        }
+        holder.icon.setImageUrl(url, mImageLoader);
         holder.title.setText(listData.get(position).getSnippet().getTitle());
 
         return rowView;

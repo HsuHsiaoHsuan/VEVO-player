@@ -75,6 +75,8 @@ public class Snippet {
         private String kind;
         private String channelId;
 
+        private String videoId;
+
         public String getKind() {
             return kind;
         }
@@ -90,6 +92,14 @@ public class Snippet {
         public void setChannelId(String channelId) {
             this.channelId = channelId;
         }
+
+        public String getVideoId() {
+            return videoId;
+        }
+
+        public void setVideoId(String videoId) {
+            this.videoId = videoId;
+        }
     }
 
     public class Thumbnails {
@@ -101,6 +111,30 @@ public class Snippet {
         private High high;          // subscriptions, playlists
         private Standard standard;  // playlists
         private Maxres maxres;      // playlists
+
+        public Medium getMedium() {
+            return medium;
+        }
+
+        public void setMedium(Medium medium) {
+            this.medium = medium;
+        }
+
+        public Standard getStandard() {
+            return standard;
+        }
+
+        public void setStandard(Standard standard) {
+            this.standard = standard;
+        }
+
+        public Maxres getMaxres() {
+            return maxres;
+        }
+
+        public void setMaxres(Maxres maxres) {
+            this.maxres = maxres;
+        }
 
         public Default getDef() {
             return def;
