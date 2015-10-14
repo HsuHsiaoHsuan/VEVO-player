@@ -248,21 +248,21 @@ public class Fragment_PlaylistItems extends Fragment implements AbsListView.OnIt
             setLayoutSize(videoFragment.getView(), MATCH_PARENT, MATCH_PARENT);
             setLayoutSizeAndGravity(videoBox, MATCH_PARENT, MATCH_PARENT, Gravity.TOP | Gravity.LEFT);
         } else if (isPortrait) {
-            setLayoutSize(listFragment.getView(), MATCH_PARENT, MATCH_PARENT);
+            setLayoutSize(mListView, MATCH_PARENT, MATCH_PARENT);
             setLayoutSize(videoFragment.getView(), MATCH_PARENT, WRAP_CONTENT);
             setLayoutSizeAndGravity(videoBox, MATCH_PARENT, WRAP_CONTENT, Gravity.BOTTOM);
         } else {
-//            videoBox.setTranslationY(0); // Reset any translation that was applied in portrait.
-//            int screenWidth = dpToPx(getResources().getConfiguration().screenWidthDp);
-//            setLayoutSize(listFragment.getView(), screenWidth / 4, MATCH_PARENT);
-//            int videoWidth = screenWidth - screenWidth / 4 - dpToPx(LANDSCAPE_VIDEO_PADDING_DP);
-//            setLayoutSize(videoFragment.getView(), videoWidth, WRAP_CONTENT);
-//            setLayoutSizeAndGravity(videoBox, videoWidth, WRAP_CONTENT,
-//                    Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+            videoBox.setTranslationY(0); // Reset any translation that was applied in portrait.
+            int screenWidth = dpToPx(getResources().getConfiguration().screenWidthDp);
+            setLayoutSize(mListView, screenWidth / 4, MATCH_PARENT);
+            int videoWidth = screenWidth - screenWidth / 4 - dpToPx(5); // LANDSCAPE_VIDEO_PADDING_DP
+            setLayoutSize(videoFragment.getView(), videoWidth, WRAP_CONTENT);
+            setLayoutSizeAndGravity(videoBox, videoWidth, WRAP_CONTENT,
+                    Gravity.RIGHT | Gravity.CENTER_VERTICAL);
         }
     }
 
-    public void onClickClose(@SuppressWarnings("unused") View view) {
+    public void onCloseButton(@SuppressWarnings("unused") View view) {
         mListView.clearChoices();
         mListView.requestLayout();
         videoFragment.pause();
@@ -304,5 +304,9 @@ public class Fragment_PlaylistItems extends Fragment implements AbsListView.OnIt
         params.height = height;
         params.gravity = gravity;
         view.setLayoutParams(params);
+    }
+
+    private int dpToPx(int dp) {
+        return (int) (dp * getResources().getDisplayMetrics().density + 0.5f);
     }
 }
