@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import idv.hsu.vevoplayer.R;
+import idv.hsu.vevoplayer.SubActivity;
 import idv.hsu.vevoplayer.conn.ConnControl;
 import idv.hsu.vevoplayer.conn.RequestMaker;
 import idv.hsu.vevoplayer.data.SubscriptionListResponseItems;
@@ -122,9 +123,8 @@ public class Fragment_Channels extends Fragment implements AbsListView.OnItemCli
     public void onResume() {
         super.onResume();
         if (D) {
-            Log.d(TAG, "onResume");
+            Log.d(TAG, "onResume channelId = " + channelId);
         }
-
         if (listData.size() == 0) {
             nextPageToken = "INIT";
             getMoreData(true);
@@ -202,7 +202,7 @@ public class Fragment_Channels extends Fragment implements AbsListView.OnItemCli
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (null != mListener) {
             mListener.onFragmentInteraction(
-                    0,
+                    SubActivity.INTERACTION_TYPE_CHANNELS,
                     listData.get(position).getSnippet().getResourceId().getChannelId(),
                     listData.get(position).getSnippet().getTitle());
         }

@@ -123,10 +123,13 @@ public class Fragment_Playlists extends Fragment implements AbsListView.OnItemCl
     public void onResume() {
         super.onResume();
         if (D) {
-            Log.d(TAG, "onResume");
+            Log.d(TAG, "onResume channelId = " + channelId);
         }
 
-        getMoreData(true);
+        if (listData.size() == 0) {
+            nextPageToken = "INIT";
+            getMoreData(true);
+        }
     }
 
     /*

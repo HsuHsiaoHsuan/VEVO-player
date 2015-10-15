@@ -2,14 +2,12 @@ package idv.hsu.vevoplayer;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.design.widget.TabLayout;
+import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
@@ -18,7 +16,6 @@ import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 
 import idv.hsu.vevoplayer.ui.Fragment_PlaylistItems;
-import idv.hsu.vevoplayer.ui.Fragment_Sub;
 import idv.hsu.vevoplayer.ui.IOnFragmentInteractionListener;
 
 public class PlayActivity extends AppCompatActivity implements IOnFragmentInteractionListener, YouTubePlayer.OnFullscreenListener {
