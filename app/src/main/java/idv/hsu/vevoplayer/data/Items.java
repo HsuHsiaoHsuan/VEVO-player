@@ -1,7 +1,7 @@
 package idv.hsu.vevoplayer.data;
 
-public class SubscriptionListResponseItems {
-    public SubscriptionListResponseItems() {
+public class Items {
+    public Items() {
     }
 
     private String kind;

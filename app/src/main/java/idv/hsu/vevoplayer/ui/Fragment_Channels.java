@@ -9,34 +9,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
-import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import idv.hsu.vevoplayer.R;
 import idv.hsu.vevoplayer.SubActivity;
 import idv.hsu.vevoplayer.conn.ConnControl;
 import idv.hsu.vevoplayer.conn.RequestMaker;
-import idv.hsu.vevoplayer.data.SubscriptionListResponseItems;
+import idv.hsu.vevoplayer.data.Items;
+import idv.hsu.vevoplayer.event.Event_Channels;
 
 public class Fragment_Channels extends Fragment implements AbsListView.OnItemClickListener {
     private static final String TAG = Fragment_Channels.class.getSimpleName();
@@ -45,16 +30,12 @@ public class Fragment_Channels extends Fragment implements AbsListView.OnItemCli
     private RequestQueue queue;
     private static final String PARAM_CHANNELID = "CHANNELID";
     private String channelId;
-    JsonFactory factory = new JsonFactory();
-    ObjectMapper mapper = new ObjectMapper();
-    private String nextPageToken = "INIT";
-    private String prevPageToken = "INIT";
+    private String nextPageToken = null;
 
     private IOnFragmentInteractionListener mListener;
     private AbsListView mListView;
     private Adapter_Channels mAdapter;
-    private List<SubscriptionListResponseItems> listData;
-    private SwipyRefreshLayout swipy;
+    private List<Items> listData;
 
     public static Fragment_Channels newInstance(String id) {
         Fragment_Channels fragment = new Fragment_Channels();
@@ -86,9 +67,6 @@ public class Fragment_Channels extends Fragment implements AbsListView.OnItemCli
         if (getArguments() != null) {
             channelId = getArguments().getString(PARAM_CHANNELID);
         }
-
-        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
     @Override
@@ -103,93 +81,61 @@ public class Fragment_Channels extends Fragment implements AbsListView.OnItemCli
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(this);
 
-        swipy = ((SwipyRefreshLayout) view.findViewById(R.id.swipyrefreshlayout));
-        swipy.setOnRefreshListener(new SwipyRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh(SwipyRefreshLayoutDirection direction) {
-                if (nextPageToken.equals("END")) {
-                    Toast.makeText(getContext(), R.string.alarm_last_page, Toast.LENGTH_LONG).show();
-                    swipy.setRefreshing(false);
-                } else {
-                    getMoreData(false);
-                }
-            }
-        });
-
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        EventBus.getDefault().register(this);
         if (D) {
             Log.d(TAG, "onResume channelId = " + channelId);
         }
         if (listData.size() == 0) {
-            nextPageToken = "INIT";
-            getMoreData(true);
+            nextPageToken = null;
+            getMoreData();
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
     /*
-       FIXME
-       use your own key, create a keys.xml in values folder,
-       and add a named "key" string resource.
-       i.e.
-       <?xml version="1.0" encoding="utf-8"?>
-           <resources>
-            <string name="key">(your api key)</string>
-       </resources>
-     */
-    private void getMoreData(final boolean init) {
+           FIXME
+           use your own key, create a keys.xml in values folder,
+           and add a named "key" string resource.
+           i.e.
+           <?xml version="1.0" encoding="utf-8"?>
+               <resources>
+                <string name="key">(your api key)</string>
+           </resources>
+         */
+    private void getMoreData() {
         final String key = getActivity().getString(R.string.key);
-        String url = new RequestMaker("subscriptions", "snippet")
+        new RequestMaker("subscriptions", "snippet")
                 .channelId(channelId)
                 .maxResults(50)
                 .pageToken(nextPageToken)
-                .build(key);
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        if (D) {
-                            Log.d(TAG, "onResponse: " + response);
-                        }
-                        JsonParser parser = null;
-                        try {
-                            if (response.has("nextPageToken")) {
-                                nextPageToken = response.getString("nextPageToken");
-                            } else {
-                                nextPageToken = "END";
-//                                Toast.makeText(getContext(), R.string.alarm_last_page, Toast.LENGTH_LONG).show();
-                            }
+                .build(key)
+                .requestResult(new Event_Channels(), queue);
+    }
 
-                            if (response.has("prevPageToken")) {
-                                prevPageToken = response.getString("prevPageToken");
-                            } else {
-//                                Toast.makeText(getContext(), "First Page!", Toast.LENGTH_LONG).show();
-                            }
+    public void onEventMainThread(Event_Channels event) {
+        if (D) {
+            Log.d(TAG, "onEventMainThread getEvent!");
+        }
+        idv.hsu.vevoplayer.data.Response response = event.getData();
+        nextPageToken = response.getNextPageToken();
 
-                            parser = factory.createParser(response.getJSONArray("items").toString());
-                            SubscriptionListResponseItems[] items = mapper.readValue(parser, SubscriptionListResponseItems[].class);
-                            if (init) { listData.clear(); }
-                            listData.addAll(Arrays.asList(items));
-                            mAdapter.notifyDataSetChanged();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } finally {
-                            if (swipy.isRefreshing()) { swipy.setRefreshing(false); }
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if (swipy.isRefreshing()) { swipy.setRefreshing(false); }
-            }
-        });
-        queue.add(request);
+        listData.addAll(response.getItems());
+        mAdapter.notifyDataSetChanged();
+
+        if (nextPageToken != null) {
+            getMoreData();
+        }
     }
 
     @Override

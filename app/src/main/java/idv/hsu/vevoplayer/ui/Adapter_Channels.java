@@ -13,17 +13,17 @@ import java.util.List;
 
 import idv.hsu.vevoplayer.R;
 import idv.hsu.vevoplayer.conn.ConnControl;
-import idv.hsu.vevoplayer.data.SubscriptionListResponseItems;
+import idv.hsu.vevoplayer.data.Items;
 
 public class Adapter_Channels extends BaseAdapter{
     private static final String TAG = Adapter_Channels.class.getSimpleName();
     private static final boolean D = true;
 
     private LayoutInflater mInflater;
-    private List<SubscriptionListResponseItems> listData;
+    private List<Items> listData;
     private ImageLoader mImageLoader;
 
-    public Adapter_Channels(LayoutInflater inflater, List<SubscriptionListResponseItems> data) {
+    public Adapter_Channels(LayoutInflater inflater, List<Items> data) {
         mInflater = inflater;
         listData = data;
         mImageLoader = ConnControl.getInstance(inflater.getContext()).getmImageLoader();

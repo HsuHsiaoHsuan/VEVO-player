@@ -32,11 +32,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import idv.hsu.vevoplayer.R;
 import idv.hsu.vevoplayer.SubActivity;
 import idv.hsu.vevoplayer.conn.ConnControl;
 import idv.hsu.vevoplayer.conn.RequestMaker;
-import idv.hsu.vevoplayer.data.SubscriptionListResponseItems;
+import idv.hsu.vevoplayer.data.Items;
+import idv.hsu.vevoplayer.event.Event_Channels;
+import idv.hsu.vevoplayer.event.Event_Playlist;
 
 public class Fragment_Playlists extends Fragment implements AbsListView.OnItemClickListener {
     private static final String TAG = Fragment_Playlists.class.getSimpleName();
@@ -45,16 +48,12 @@ public class Fragment_Playlists extends Fragment implements AbsListView.OnItemCl
     private RequestQueue queue;
     private static final String PARAM_PLAYLISTID = "PLAYLISTID";
     private String channelId;
-    JsonFactory factory = new JsonFactory();
-    ObjectMapper mapper = new ObjectMapper();
-    private String nextPageToken = "INIT";
-    private String prevPageToken = "INIT";
+    private String nextPageToken = null;
 
     private IOnFragmentInteractionListener mListener;
     private AbsListView mListView;
     private Adapter_Channels mAdapter;
-    private List<SubscriptionListResponseItems> listData;
-    private SwipyRefreshLayout swipy;
+    private List<Items> listData;
 
     public static Fragment_Playlists newInstance(String id) {
         Fragment_Playlists fragment = new Fragment_Playlists();
@@ -86,9 +85,6 @@ public class Fragment_Playlists extends Fragment implements AbsListView.OnItemCl
         if (getArguments() != null) {
             channelId = getArguments().getString(PARAM_PLAYLISTID);
         }
-
-        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
     @Override
@@ -103,33 +99,27 @@ public class Fragment_Playlists extends Fragment implements AbsListView.OnItemCl
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(this);
 
-        swipy = ((SwipyRefreshLayout) view.findViewById(R.id.swipyrefreshlayout));
-        swipy.setOnRefreshListener(new SwipyRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh(SwipyRefreshLayoutDirection direction) {
-                if (nextPageToken.equals("END")) {
-                    Toast.makeText(getContext(), R.string.alarm_last_page, Toast.LENGTH_LONG).show();
-                    swipy.setRefreshing(false);
-                } else {
-                    getMoreData(false);
-                }
-            }
-        });
-
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        EventBus.getDefault().register(this);
         if (D) {
             Log.d(TAG, "onResume channelId = " + channelId);
         }
 
         if (listData.size() == 0) {
-            nextPageToken = "INIT";
-            getMoreData(true);
+            nextPageToken = null;
+            getMoreData();
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
     }
 
     /*
@@ -142,52 +132,29 @@ public class Fragment_Playlists extends Fragment implements AbsListView.OnItemCl
                 <string name="key">(your api key)</string>
            </resources>
          */
-    private void getMoreData(final boolean init) {
+    private void getMoreData() {
         final String key = getActivity().getString(R.string.key);
-        String url = new RequestMaker("playlists", "snippet")
+        new RequestMaker("playlists", "snippet")
                 .channelId(channelId)
                 .maxResults(50)
                 .pageToken(nextPageToken)
-                .build(key);
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        JsonParser parser = null;
-                        try {
-                            if (response.has("nextPageToken")) {
-                                nextPageToken = response.getString("nextPageToken");
-                            } else {
-                                nextPageToken = "END";
-                                Toast.makeText(getContext(), R.string.alarm_last_page, Toast.LENGTH_LONG).show();
-                            }
+                .build(key)
+                .requestResult(new Event_Playlist(), queue);
+    }
 
-                            if (response.has("prevPageToken")) {
-                                prevPageToken = response.getString("prevPageToken");
-                            } else {
-//                                Toast.makeText(getContext(), "First Page!", Toast.LENGTH_LONG).show();
-                            }
+    public void onEventMainThread(Event_Playlist event) {
+        if (D) {
+            Log.d(TAG, "onEventMainThread getEvent!");
+        }
+        idv.hsu.vevoplayer.data.Response response = event.getData();
+        nextPageToken = response.getNextPageToken();
 
-                            parser = factory.createParser(response.getJSONArray("items").toString());
-                            SubscriptionListResponseItems[] items = mapper.readValue(parser, SubscriptionListResponseItems[].class);
-                            if (init) { listData.clear(); }
-                            listData.addAll(Arrays.asList(items));
-                            mAdapter.notifyDataSetChanged();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } finally {
-                            if (swipy.isRefreshing()) { swipy.setRefreshing(false); }
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if (swipy.isRefreshing()) { swipy.setRefreshing(false); }
-            }
-        });
-        queue.add(request);
+        listData.addAll(response.getItems());
+        mAdapter.notifyDataSetChanged();
+
+        if (nextPageToken != null) {
+            getMoreData();
+        }
     }
 
     @Override

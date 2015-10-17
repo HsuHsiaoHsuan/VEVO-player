@@ -1,26 +1,14 @@
 package idv.hsu.vevoplayer.ui;
 
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewPropertyAnimator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -33,11 +21,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.android.youtube.player.YouTubeApiServiceUtil;
-import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubeIntents;
-import com.google.android.youtube.player.YouTubePlayer;
-import com.google.android.youtube.player.YouTubePlayerView;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 
@@ -53,7 +36,7 @@ import idv.hsu.vevoplayer.PlayActivity;
 import idv.hsu.vevoplayer.R;
 import idv.hsu.vevoplayer.conn.ConnControl;
 import idv.hsu.vevoplayer.conn.RequestMaker;
-import idv.hsu.vevoplayer.data.SubscriptionListResponseItems;
+import idv.hsu.vevoplayer.data.Items;
 
 public class Fragment_PlaylistItems extends Fragment implements AbsListView.OnItemClickListener {
     private static final String TAG = Fragment_PlaylistItems.class.getSimpleName();
@@ -70,7 +53,7 @@ public class Fragment_PlaylistItems extends Fragment implements AbsListView.OnIt
     private IOnFragmentInteractionListener mListener;
     private AbsListView mListView;
     private Adapter_Channels mAdapter;
-    private List<SubscriptionListResponseItems> listData;
+    private List<Items> listData;
     private SwipyRefreshLayout swipy;
 
     public static Fragment_PlaylistItems newInstance(String id) {
@@ -158,50 +141,50 @@ public class Fragment_PlaylistItems extends Fragment implements AbsListView.OnIt
          */
     private void getMoreData(final boolean init) {
         final String key = getActivity().getString(R.string.key);
-        String url = new RequestMaker("playlistItems", "snippet")
-                .playlistId(playlistId)
-                .maxResults(50)
-                .pageToken(nextPageToken)
-                .build(key);
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        JsonParser parser = null;
-                        try {
-                            if (response.has("nextPageToken")) {
-                                nextPageToken = response.getString("nextPageToken");
-                            } else {
-                                nextPageToken = "END";
-                                Toast.makeText(getContext(), R.string.alarm_last_page, Toast.LENGTH_LONG).show();
-                            }
-
-                            if (response.has("prevPageToken")) {
-                                prevPageToken = response.getString("prevPageToken");
-                            } else {
-//                                Toast.makeText(getContext(), "First Page!", Toast.LENGTH_LONG).show();
-                            }
-
-                            parser = factory.createParser(response.getJSONArray("items").toString());
-                            SubscriptionListResponseItems[] items = mapper.readValue(parser, SubscriptionListResponseItems[].class);
-                            if (init) { listData.clear(); }
-                            listData.addAll(Arrays.asList(items));
-                            mAdapter.notifyDataSetChanged();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } finally {
-                            if (swipy.isRefreshing()) { swipy.setRefreshing(false); }
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if (swipy.isRefreshing()) { swipy.setRefreshing(false); }
-            }
-        });
-        queue.add(request);
+//        String url = new RequestMaker("playlistItems", "snippet")
+//                .playlistId(playlistId)
+//                .maxResults(50)
+//                .pageToken(nextPageToken)
+//                .build(key);
+//        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,
+//                new Response.Listener<JSONObject>() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        JsonParser parser = null;
+//                        try {
+//                            if (response.has("nextPageToken")) {
+//                                nextPageToken = response.getString("nextPageToken");
+//                            } else {
+//                                nextPageToken = "END";
+//                                Toast.makeText(getContext(), R.string.alarm_last_page, Toast.LENGTH_LONG).show();
+//                            }
+//
+//                            if (response.has("prevPageToken")) {
+//                                prevPageToken = response.getString("prevPageToken");
+//                            } else {
+////                                Toast.makeText(getContext(), "First Page!", Toast.LENGTH_LONG).show();
+//                            }
+//
+//                            parser = factory.createParser(response.getJSONArray("items").toString());
+//                            Items[] items = mapper.readValue(parser, Items[].class);
+//                            if (init) { listData.clear(); }
+//                            listData.addAll(Arrays.asList(items));
+//                            mAdapter.notifyDataSetChanged();
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        } finally {
+//                            if (swipy.isRefreshing()) { swipy.setRefreshing(false); }
+//                        }
+//                    }
+//                }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                if (swipy.isRefreshing()) { swipy.setRefreshing(false); }
+//            }
+//        });
+//        queue.add(request);
     }
 
     @Override

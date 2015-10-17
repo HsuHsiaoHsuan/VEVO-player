@@ -6,17 +6,10 @@
     android:layout_height="match_parent"
     tools:context="idv.hsu.vevoplayer.ui.Fragment_Channels">
 
-    <com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout
-        android:id="@+id/swipyrefreshlayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:direction="bottom">
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fastScrollEnabled="true"/>
 
-        <ListView
-            android:id="@android:id/list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout>
-    s
 </FrameLayout>

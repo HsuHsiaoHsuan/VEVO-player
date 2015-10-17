@@ -2,15 +2,16 @@ package idv.hsu.vevoplayer.data;
 
 import java.util.List;
 
-public class SubscriptionListResponse {
-    public SubscriptionListResponse() {
+public class Response {
+    public Response() {
     }
 
     private String kind;
     private String etag;
     private String nextPageToken;
+    private String prevPageToken;
     private PageInfo pageInfo;
-    private List<SubscriptionListResponseItems> items;
+    private List<Items> items;
 
     public String getKind() {
         return kind;
@@ -36,6 +37,14 @@ public class SubscriptionListResponse {
         this.nextPageToken = nextPageToken;
     }
 
+    public String getPrevPageToken() {
+        return prevPageToken;
+    }
+
+    public void setPrevPageToken(String prevPageToken) {
+        this.prevPageToken = prevPageToken;
+    }
+
     public PageInfo getPageInfo() {
         return pageInfo;
     }
@@ -44,11 +53,11 @@ public class SubscriptionListResponse {
         this.pageInfo = pageInfo;
     }
 
-    public List<SubscriptionListResponseItems> getItems() {
+    public List<Items> getItems() {
         return items;
     }
 
-    public void setItems(List<SubscriptionListResponseItems> items) {
+    public void setItems(List<Items> items) {
         this.items = items;
     }
 }
